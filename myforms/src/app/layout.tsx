@@ -7,6 +7,9 @@ import "@fortawesome/fontawesome-svg-core/styles.css";
 import { config } from "@fortawesome/fontawesome-svg-core";
 config.autoAddCss = false;
 
+//context
+import Context from './context';
+
 const inter = Inter({ subsets: ['latin'], weight: '400', })
 
 export const metadata = {
@@ -20,11 +23,13 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" >
       <body className={inter.className}>
-        <Navbar />
-        {children}
-        <Footer />
+        <Context>
+          <Navbar />
+          {children}
+          <Footer />
+        </Context>
       </body>
     </html>
   )

@@ -5,6 +5,7 @@ module.exports = {
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
+  darkMode: "class",
   theme: {
     extend: {
       backgroundImage: {
@@ -14,13 +15,15 @@ module.exports = {
       },
       colors: {
         'dark-text': '#fffffe',
-        'dark-button': '#7f5af0',
+        'dark-btn': '#7f5af0',
         'dark-p': '#94a1b2',
         'dark-bg': '#16161a',
+        'dark-sec': '#72757e',
         'light-text': '#272343',
-        'light-button': '#ffd803',
+        'light-btn': '#ffd803',
         'light-p': '#2d334a',
-        'light-bg': '##fffffe'
+        'light-bg': '##fffffe',
+        'light-sec': '#e3f6f5'
       }
     },
   },
