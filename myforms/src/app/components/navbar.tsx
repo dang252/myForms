@@ -1,3 +1,5 @@
+'use client'
+
 import Link from "next/link"
 import Logo from "./logo"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
@@ -14,7 +16,7 @@ export default function Navbar() {
                 <ThemeBtn />
             </div>
             <Link href={"/"} className="rounded-full shadow-md w-12 h-12 flex justify-center items-center hover:bg-light-sec dark:hover:bg-dark-sec" >
-                <FontAwesomeIcon icon={faUser} className="h-6 w-6" />
+                <FontAwesomeIcon icon={faUser} className="h-6 w-6 text-2xl " />
             </Link>
         </div>
     )
