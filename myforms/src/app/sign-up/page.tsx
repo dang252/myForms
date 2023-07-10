@@ -12,7 +12,7 @@ export const metadata = {
 
 export default function SignUp({ }: NameProps) {
     return (
-        <div className="flex justify-center items-center min-h-screen p-8 bg-[url('/bg-light.jpg')] dark:bg-[url('/bg-dark.jpg')] shadow-lg relative">
+        <div className="flex justify-center items-center min-h-screen p-8 mt-[71px] bg-[url('/bg-light-2.jpg')] dark:bg-[url('/bg-dark-2.jpg')] bg-cover shadow-lg relative">
             <SignUpForm />
         </div>
     );

@@ -7,9 +7,9 @@ import { faSquareFacebook, faGithubSquare, faLinkedin, faGoogle } from "@fortawe
 
 export default function SignInForm() {
     return (
-        <div className=" w-[400px] h-[550px] bg-light-bg text-light-p  dark:bg-dark-bg dark:text-dark-p rounded-lg p-4 ">
+        <div className=" w-[400px] h-[550px] bg-light-bg text-light-p  dark:bg-dark-bg dark:text-dark-p rounded-lg p-4 relative">
             <Logo />
-            <form className="p-4">
+            <form className="p-4 flex flex-col h-[446px]">
                 <h1 className="text-light-text dark:text-dark-text font-bold text-xl">Sign in</h1>
                 <br />
                 <div>
@@ -51,14 +51,16 @@ export default function SignInForm() {
                         </div>
                     </div>
                 </div>
-                <input
-                    className='bg-light-btn dark:bg-dark-btn text-light-text dark:text-dark-text text-center font-bold px-4 py-2 rounded-md w-full mb-auto mt-5'
-                    type="submit"
-                    value="Sign in"
-                />
-                <div className="text-sm mt-1">
-                    <span>No Account? </span>
-                    <Link href='/sign-up' className=" text-sky-600">Sign up</Link>
+                <div className="mt-auto">
+                    <input
+                        className='cursor-pointer bg-light-btn dark:bg-dark-btn text-light-text dark:text-dark-text text-center font-bold px-4 py-2 rounded-md w-full mb-auto mt-5'
+                        type='submit'
+                        value="Sign in"
+                    />
+                    <div className="text-sm mt-1">
+                        <span>No Account? </span>
+                        <Link href='/sign-up' className=" text-sky-600">Sign up</Link>
+                    </div>
                 </div>
             </form>
         </div>
