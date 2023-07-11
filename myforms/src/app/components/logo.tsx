@@ -10,6 +10,15 @@ export default function Logo() {
     // useEffect(() => {
     //     setIsDark((resolvedTheme === 'dark' || localStorage.theme === 'dark') ? true : false)
     // }, [resolvedTheme])
+    const [mounted, setMounted] = useState(false)
+
+    useEffect(() => {
+        setMounted(true)
+    }, [])
+
+    if (!mounted) {
+        return null
+    }
     return (
         <>
             {

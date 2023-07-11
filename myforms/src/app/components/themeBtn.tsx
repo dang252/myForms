@@ -3,7 +3,7 @@
 import { useTheme } from 'next-themes'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faSun, faMoon } from "@fortawesome/free-solid-svg-icons"
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function ThemeBtn() {
     const { resolvedTheme, setTheme } = useTheme()
@@ -14,6 +14,15 @@ export default function ThemeBtn() {
     }
     // console.log('theme', theme)
     // console.log('resolved theme', resolvedTheme)
+    const [mounted, setMounted] = useState(false)
+
+    useEffect(() => {
+        setMounted(true)
+    }, [])
+
+    if (!mounted) {
+        return null
+    }
 
     return (
         <div onClick={handleChange} className={'theme-btn transition-transform mx-auto text-center ' + (resolvedTheme === 'dark' ? 'translate-y-[22px]' : 'translate-y-[-18px]')}>
