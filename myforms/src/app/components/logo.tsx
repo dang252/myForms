@@ -13,7 +13,7 @@ export default function Logo() {
     return (
         <>
             {
-                (resolvedTheme === 'dark' || localStorage?.theme === 'dark')
+                (resolvedTheme === 'dark')
                     ? <Image src="/Logo.png" alt='MyForms' width={200} height={71} className="object-contain" />
                     : <Image src="/Logo-light.png" alt='MyForms' width={200} height={71} className="object-contain" />
             }
