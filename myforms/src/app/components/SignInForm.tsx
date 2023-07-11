@@ -4,29 +4,49 @@ import Logo from "../components/logo";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faSquareFacebook, faGithubSquare, faLinkedin, faGoogle } from "@fortawesome/free-brands-svg-icons"
+import { useState } from "react"
 
 export default function SignInForm() {
+    const [account, setAccount] = useState({
+        un: '',
+        pw: '',
+    })
+
+    function handleOnSubmit(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+        console.log(account)
+    }
     return (
         <div className=" w-[400px] h-[550px] bg-light-bg text-light-p  dark:bg-dark-bg dark:text-dark-p rounded-lg p-4 relative">
             <Logo />
-            <form className="p-4 flex flex-col h-[446px]">
+            <form className="p-4 flex flex-col h-[446px]" onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+                handleOnSubmit(e)
+            }}>
                 <h1 className="text-light-text dark:text-dark-text font-bold text-xl">Sign in</h1>
                 <br />
                 <div>
-                    <label>Email or Username:</label>
+                    <label htmlFor="un-input">Email or Username:</label>
                     <input
                         className="rounded-md border-2 w-full p-2"
                         type="text"
+                        id="un-input"
                         required
+                        onChange={(e) => {
+                            setAccount({ ...account, un: e.target.value })
+                        }}
                     />
                     <p id="email-warn" className="text-sm text-red-700"></p>
                 </div>
                 <div className="mt-2">
-                    <label>Password:</label>
+                    <label htmlFor="pw-input">Password:</label>
                     <input
                         className="rounded-md border-2 w-full p-2"
                         type="password"
+                        id="pw-input"
                         required
+                        onChange={(e) => {
+                            setAccount({ ...account, pw: e.target.value })
+                        }}
                     />
                     <p id="passwor-warn" className="text-sm text-red-700"></p>
                 </div>
