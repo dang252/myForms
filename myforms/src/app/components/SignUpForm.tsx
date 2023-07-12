@@ -11,12 +11,12 @@ import { regexEmail, regexPassword, regexTel } from "../regex";
 
 function ContinueHandle() {
     const form = document.getElementById('sign-up-form')
-    form?.classList.add('translate-x-[-376px]')
+    form?.classList.add('translate-x-[-50%]')
 }
 
 function GobackHandle() {
     const form = document.getElementById('sign-up-form')
-    form?.classList.remove('translate-x-[-376px]')
+    form?.classList.remove('translate-x-[-50%]')
 }
 
 export default function SignUpForm() {
@@ -60,8 +60,8 @@ export default function SignUpForm() {
         <div className=" w-[400px] h-[600px] bg-light-bg text-light-p  dark:bg-dark-bg dark:text-dark-p rounded-lg p-4 flex flex-col flex-wrap overflow-hidden relative">
             <Logo />
             <h1 className="text-light-text dark:text-dark-text font-bold text-xl  px-4">Sign up</h1>
-            <form id='sign-up-form' className="px-4 h-[468px] flex transition-translate duration-500" onSubmit={(e) => { handleOnSubmit(e) }}>
-                <div className="w-[336px] flex flex-col">
+            <form id='sign-up-form' className=" w-[200%] h-[468px] inline-flex transition-translate duration-500" onSubmit={(e) => { handleOnSubmit(e) }}>
+                <div className="w-1/2 flex flex-col px-4">
                     <div className="mt-2">
                         <label htmlFor="email-input">Email:</label>
                         <input
@@ -104,7 +104,7 @@ export default function SignUpForm() {
                     </div>
                     <div className="mt-auto">
                         <p className=" before:content-['-'] after:content-['-'] text-center ">or</p>
-                        <div className="flex items-center justify-center gap-3 text-4xl">
+                        <div className="flex flex-wrap items-center justify-center gap-3 text-4xl">
                             <div className=" cursor-pointer rounded-md bg-blue-700 text-light-bg flex items-center overflow-hidden w-[35px] transition-all duration-500 hover:w-[165px] h-[35px] p-[2px] ">
                                 <FontAwesomeIcon icon={faSquareFacebook} />
                                 <div className="text-xs whitespace-nowrap p-1">Sign in with Facebook</div>
@@ -137,7 +137,7 @@ export default function SignUpForm() {
                         </div>
                     </div>
                 </div>
-                <div className="w-[336px] ml-10 flex flex-col">
+                <div className="w-1/2 px-4 right-0 flex flex-col">
                     <div className="mt-2">
                         <label htmlFor="un-input">Username:</label>
                         <input

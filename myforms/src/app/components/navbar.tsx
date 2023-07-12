@@ -5,10 +5,32 @@ import Logo from "./logo"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faUser } from "@fortawesome/free-solid-svg-icons"
 import ThemeBtn from "./themeBtn"
+import { useEffect } from 'react'
 
 export default function Navbar() {
+
+    useEffect(() => {
+        var nav = document.getElementById('navbar')
+        function scrollHandle() {
+            if (window.scrollY > 10) {
+                nav?.classList.add("shadow-lg")
+                nav?.classList.remove('border-b-[1px]')
+            }
+            else {
+                nav?.classList.remove('shadow-lg')
+                nav?.classList.add('border-b-[1px]')
+            }
+        }
+
+        window.addEventListener('scroll', scrollHandle);
+
+        return () => {
+            window.removeEventListener('scroll', scrollHandle);
+        };
+    }, []);
+
     return (
-        <div className="fixed top-0 shadow-md w-full z-10 flex items-center bg-light-bg dark:bg-dark-bg text-ligt-text dark:text-dark-text">
+        <div id="navbar" className=" border-b-[1px] border-gray-200 dark:border-gray-600 sticky top-0 w-full z-10 flex items-center bg-light-bg dark:bg-dark-bg text-ligt-text dark:text-dark-text">
             <Link href={"/"} className="w-fit block">
                 <Logo />
             </Link>
@@ -18,9 +40,9 @@ export default function Navbar() {
             {/* <Link href={"/"} className="rounded-full shadow-md w-12 h-12 flex justify-center items-center hover:bg-light-sec dark:hover:bg-dark-sec" >
                 <FontAwesomeIcon icon={faUser} className="h-6 w-6 text-2xl " />
             </Link> */}
-            <div className=" mr-1">
-                <Link href={'/sign-in'} className="hover:bg-light-sec dark:hover:bg-dark-sec rounded-md py-4 px-1 font-bold">Sign in</Link>
-                <Link href={'/sign-up'} className="hover:bg-light-sec dark:hover:bg-dark-sec rounded-md py-4 px-1 font-bold ml-2">Sign up</Link>
+            <div className=" mr-1 flex">
+                <Link href={'/sign-in'} className="hover:bg-light-sec dark:hover:bg-dark-sec rounded-md py-4 px-1 font-bold mr-2">Sign in</Link>
+                <Link href={'/sign-up'} className="hover:bg-light-sec dark:hover:bg-dark-sec rounded-md py-4 px-1 font-bold">Sign up</Link>
             </div>
         </div>
     )

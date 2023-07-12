@@ -52,7 +52,7 @@ export default function SignInForm() {
                 </div>
                 <div className="mt-2">
                     <p className=" before:content-['-'] after:content-['-'] text-center ">or</p>
-                    <div className="flex items-center justify-center gap-3 text-4xl">
+                    <div className="flex flex-wrap items-center justify-center gap-3 text-4xl">
                         <div className=" cursor-pointer rounded-md bg-blue-700 text-light-bg flex items-center overflow-hidden w-[35px] transition-all duration-500 hover:w-[165px] h-[35px] p-[2px] ">
                             <FontAwesomeIcon icon={faSquareFacebook} />
                             <div className="text-xs whitespace-nowrap p-1">Sign in with Facebook</div>

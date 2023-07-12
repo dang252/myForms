@@ -11,7 +11,7 @@ export default function dashboard({
     children: React.ReactNode;
 }) {
     return (
-        <div className="h-screen flex mt-[71px]">
+        <div className="h-screen flex">
             <DBSideBar />
             {children}
         </div>
