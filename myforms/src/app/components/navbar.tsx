@@ -30,11 +30,11 @@ export default function Navbar() {
     }, []);
 
     return (
-        <div id="navbar" className=" border-b-[1px] border-gray-200 dark:border-gray-600 sticky top-0 w-full z-10 flex items-center bg-light-bg dark:bg-dark-bg text-ligt-text dark:text-dark-text">
-            <Link href={"/"} className="w-fit block">
+        <div id="navbar" className=" min-h-[60px] border-b-[1px] border-gray-200 dark:border-gray-600 sticky top-0 w-full z-10 flex items-center bg-light-bg dark:bg-dark-bg text-ligt-text dark:text-dark-text text-sm sm:text-lg transition-all">
+            <Link href={"/"} className="sm:ml-5 ml-2 sm:w-[150px] w-[100px] block transition-all">
                 <Logo />
             </Link>
-            <div className="overflow-hidden ml-auto mr-2 hover:cursor-pointer hover:bg-light-sec dark:hover:bg-dark-sec flex justify-center items-center rounded-full w-12 h-12 ite">
+            <div className="overflow-hidden ml-auto mr-2 hover:cursor-pointer hover:bg-light-sec dark:hover:bg-dark-sec flex justify-center items-center rounded-full sm:w-12 sm:h-12 w-6 h-6 transition-all">
                 <ThemeBtn />
             </div>
             {/* <Link href={"/"} className="rounded-full shadow-md w-12 h-12 flex justify-center items-center hover:bg-light-sec dark:hover:bg-dark-sec" >
