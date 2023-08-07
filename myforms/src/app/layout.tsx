@@ -12,6 +12,7 @@ import Context from './context';
 
 import Navbar from './components/navbar'
 import Footer from './components/footer'
+import LoadingModal from './components/loading-modal';
 
 const inter = Inter({ subsets: ['latin'], weight: '400', })
 
@@ -35,6 +36,7 @@ export default function RootLayout({
           <Navbar />
           {children}
           <Footer />
+          <LoadingModal />
         </Context>
       </body>
     </html>

@@ -25,13 +25,13 @@ export default function SignUpForm() {
             username: '',
             email: '',
             password: '',
-            repassword: '',
-            dob: '',
+            dob: new Date(),
             phoneNumber: '',
             gender: 'male'
         }
     )
-    const cantCont: boolean = (account.email !== '' && account.password !== '' && account.repassword !== '') ? false : true
+    const [repw, setRepw] = useState<string>('');
+    const cantCont: boolean = (account.email !== '' && account.password !== '' && repw !== '') ? false : true
     const [err, setErr] = useState<number>(0)
 
     function ContinueRegex() {
@@ -43,7 +43,7 @@ export default function SignUpForm() {
             setErr(2);
             return false;
         }
-        else if (account.password !== account.repassword) {
+        else if (account.password !== repw) {
             setErr(3);
             return false;
         }
@@ -51,16 +51,37 @@ export default function SignUpForm() {
         return true
     }
 
-    function handleOnSubmit(e: React.FormEvent<HTMLFormElement>) {
-        e.preventDefault()
-        console.log(account)
-    }
+    async function handleOnSubmit(e: React.FormEvent<HTMLFormElement>) {
 
+        e.preventDefault()
+        const res = await fetch('https://localhost:7299/auth/register', {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(account)
+        })
+        const data = await res.text();
+        if (!res.ok) {
+            if (data.includes("Email")) {
+                setErr(5);
+                return;
+            }
+            else if (data.includes("Username")) {
+                setErr(6);
+                return;
+            }
+        }
+        else {
+            console.log("ok");
+        }
+    }
+    console.log(account.gender)
     return (
         <div className=" w-[400px] h-[600px] bg-light-bg text-light-p  dark:bg-dark-bg dark:text-dark-p rounded-lg p-4 flex flex-col flex-wrap overflow-hidden relative">
             <Logo />
             <h1 className="text-light-text dark:text-dark-text font-bold text-xl  px-4">Sign up</h1>
-            <form id='sign-up-form' className=" w-[200%] h-[468px] inline-flex transition-translate duration-500" onSubmit={(e) => { handleOnSubmit(e) }}>
+            <form id='sign-up-form' className=" w-[200%] h-[468px] inline-flex transition-translate duration-500" onSubmit={(e) => { handleOnSubmit(e) }} onKeyDown={(e) => { e.key === 'Enter' && e.preventDefault(); }}>
                 <div className="w-1/2 flex flex-col px-4">
                     <div className="mt-2">
                         <label htmlFor="email-input">Email:</label>
@@ -93,14 +114,13 @@ export default function SignUpForm() {
                         <input
                             className="rounded-md border-2 w-full p-2"
                             type="password"
-                            value={account.repassword}
+                            value={repw}
                             onChange={(e) => {
-                                setAccount({ ...account, repassword: e.target.value })
+                                setRepw(e.target.value)
                             }}
                             id='repw-input' name='repw-input'
                             required
                         />
-                        <p id="confirm-password-warn" className="text-sm text-red-700"></p>
                     </div>
                     <div className="mt-auto">
                         <p className=" before:content-['-'] after:content-['-'] text-center ">or</p>
@@ -166,8 +186,7 @@ export default function SignUpForm() {
                     </div>
                     <div className="mt-2">
                         <label>Date of birth:</label>
-                        <DatePicker EndYear={2023} StartYear={1970} handleOnChange={(dob: string) => { setAccount({ ...account, dob: dob }) }} />
-                        <p id="email-warn" className="text-sm text-red-700"></p>
+                        <DatePicker EndYear={2023} StartYear={1970} handleOnChange={(dob: Date) => { setAccount({ ...account, dob: dob }) }} />
                     </div>
                     <div className="mt-2">
                         <label>Gender:</label>
@@ -177,7 +196,7 @@ export default function SignUpForm() {
                                 name='gender'
                                 type='radio'
                                 value='male'
-                                defaultChecked
+                                checked={account.gender === 'male' ? true : false}
                                 onChange={() => { setAccount({ ...account, gender: 'male' }) }}
                                 id='male-radio'
                             />
@@ -187,6 +206,7 @@ export default function SignUpForm() {
                                 name='gender'
                                 type='radio'
                                 value='female'
+                                checked={account.gender === 'female' ? true : false}
                                 onChange={() => { setAccount({ ...account, gender: 'female' }) }}
                                 id='female-radio'
                             />
@@ -195,7 +215,8 @@ export default function SignUpForm() {
                                 className='ml-4 mr-2 h-5 w-5'
                                 name='gender'
                                 type='radio'
-                                value='Other'
+                                value='other'
+                                checked={account.gender === 'other' ? true : false}
                                 onChange={() => { setAccount({ ...account, gender: 'other' }) }}
                                 id='other-radio'
                             />
@@ -203,7 +224,7 @@ export default function SignUpForm() {
                         </div>
                     </div>
                     <div className="mt-auto">
-                        <p id="warn" className="text-sm text-red-700">{ }</p>
+                        <p id="warn" className="text-sm text-red-700">{err !== 0 && MSG[err as keyof typeof MSG]}</p>
                         <button
                             type="button"
                             onClick={GobackHandle}

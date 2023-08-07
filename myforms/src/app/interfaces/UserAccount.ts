@@ -2,8 +2,7 @@ export interface UserAccount {
     username: string,
     email: string,
     password: string,
-    repassword?: string,
-    dob: string,
+    dob: Date,
     phoneNumber: string,
     gender: string
 }

@@ -5,16 +5,32 @@ import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faSquareFacebook, faGithubSquare, faLinkedin, faGoogle } from "@fortawesome/free-brands-svg-icons"
 import { useState } from "react"
+import { MSG } from "../errMsg";
 
 export default function SignInForm() {
     const [account, setAccount] = useState({
-        un: '',
-        pw: '',
+        username: '',
+        password: '',
     })
-
-    function handleOnSubmit(e: React.FormEvent<HTMLFormElement>) {
+    const [err, setErr] = useState<number>(0)
+    async function handleOnSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        console.log(account)
+        const res = await fetch('https://localhost:7299/auth/login', {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(account)
+        })
+        const data = await res.text()
+        if (!res.ok) {
+            setErr(7);
+            return;
+        }
+        else {
+            console.log("ok")
+        }
+
     }
     return (
         <div className=" w-[400px] h-[550px] bg-light-bg text-light-p  dark:bg-dark-bg dark:text-dark-p rounded-lg p-4 relative">
@@ -32,10 +48,9 @@ export default function SignInForm() {
                         id="un-input"
                         required
                         onChange={(e) => {
-                            setAccount({ ...account, un: e.target.value })
+                            setAccount({ ...account, username: e.target.value })
                         }}
                     />
-                    <p id="email-warn" className="text-sm text-red-700"></p>
                 </div>
                 <div className="mt-2">
                     <label htmlFor="pw-input">Password:</label>
@@ -45,10 +60,9 @@ export default function SignInForm() {
                         id="pw-input"
                         required
                         onChange={(e) => {
-                            setAccount({ ...account, pw: e.target.value })
+                            setAccount({ ...account, password: e.target.value })
                         }}
                     />
-                    <p id="passwor-warn" className="text-sm text-red-700"></p>
                 </div>
                 <div className="mt-2">
                     <p className=" before:content-['-'] after:content-['-'] text-center ">or</p>
@@ -72,6 +86,7 @@ export default function SignInForm() {
                     </div>
                 </div>
                 <div className="mt-auto">
+                    <p id="warn" className="text-sm text-red-700">{err !== 0 && MSG[err as keyof typeof MSG]}</p>
                     <input
                         className='cursor-pointer bg-light-btn dark:bg-dark-btn text-light-text dark:text-dark-text text-center font-bold px-4 py-2 rounded-md w-full mb-auto mt-5'
                         type='submit'

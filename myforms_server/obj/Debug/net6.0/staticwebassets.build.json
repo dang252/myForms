@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "OhCLjp1DptUbUVYqGlf7DqqFMy2aS3xDps7PsmABfcw=",
+  "Source": "myforms_server",
+  "BasePath": "_content/myforms_server",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

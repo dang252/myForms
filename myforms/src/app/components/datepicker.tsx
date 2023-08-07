@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react";
 
 var dateStr: string = ''
 
-const maxDayInMonth = [0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+const maxDayInMonth = [31, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 
 export default function DatePicker({ StartYear, EndYear, handleOnChange }: YearProps) {
     var days: number[] = [];
@@ -27,14 +27,17 @@ export default function DatePicker({ StartYear, EndYear, handleOnChange }: YearP
     })
 
     useEffect(() => {
-        console.log(dayRef.current?.value)
-        if (date.day > maxDayInMonth[date.month] || (date.day === 29 && date.month === 2 && date.year % 4 !== 0)) {
+        // console.log(dayRef.current?.value)
+        // console.log(date.month)
+        if (date.month !== null && (date.day > maxDayInMonth[date.month] || (date.day === 29 && date.month === 2 && date.year % 4 !== 0))) {
             dayRef.current!.value = ''
         }
         if (date.day != 0 && date.month !== 0 && date.year !== 0) {
-            dateStr = ('0' + String(date.day)).slice(-2) + '/' + ('0' + String(date.month)).slice(-2) + '/' + String(date.year)
+            dateStr = String(date.year) + ' ' + ('0' + String(date.month)).slice(-2) + ' ' + ('0' + String(date.day)).slice(-2)
+            // console.log(dateStr)
+            var dateVal: Date = new Date(dateStr);
             if (handleOnChange !== undefined) {
-                handleOnChange(dateStr)
+                handleOnChange(dateVal)
             }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
