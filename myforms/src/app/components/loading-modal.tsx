@@ -1,5 +1,7 @@
 'use client';
 import { useEffect, useRef, useCallback } from "react";
+import { useAppSelector } from "../redux/hook";
+
 
 interface NameProps {
     propName: string;
@@ -8,15 +10,16 @@ interface NameProps {
 
 export default function LoadingModal() {
     const modal = useRef<HTMLDialogElement>(null);
+    const isLoading = useAppSelector((state) => state.LoadingReducer.isLoading)
     useEffect(() => {
-        if (false) {
+        if (isLoading) {
             // modal.current?.close()
             modal.current?.showModal();
         }
         else {
             modal.current?.close();
         }
-    }, [])
+    }, [isLoading])
 
 
     useEffect(() => {

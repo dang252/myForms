@@ -8,6 +8,10 @@ import { UserAccount } from "../interfaces/UserAccount";
 import { useState, useEffect } from "react";
 import { MSG } from "../errMsg";
 import { regexEmail, regexPassword, regexTel } from "../regex";
+import { useAppDispatch, useAppSelector } from "../redux/hook";
+import { login } from "../redux/slices/authSlice";
+import { doneLoading, loading } from "../redux/slices/loadingSlice";
+import { redirect } from 'next/navigation'
 
 function ContinueHandle() {
     const form = document.getElementById('sign-up-form')
@@ -34,6 +38,15 @@ export default function SignUpForm() {
     const cantCont: boolean = (account.email !== '' && account.password !== '' && repw !== '') ? false : true
     const [err, setErr] = useState<number>(0)
 
+    // const isLoading = useAppSelector((state) => state.LoadingReducer.isLoading)
+    const dispatch = useAppDispatch();
+
+    const username = useAppSelector((state) => state.AuthReducer.username)
+    useEffect(() => {
+        if (username != "") redirect("/")
+    }, [username])
+
+
     function ContinueRegex() {
         if (account.email === '' || !regexEmail.test(account.email)) {
             setErr(1);
@@ -54,6 +67,7 @@ export default function SignUpForm() {
     async function handleOnSubmit(e: React.FormEvent<HTMLFormElement>) {
 
         e.preventDefault()
+        dispatch(loading());
         const res = await fetch('https://localhost:7299/auth/register', {
             method: 'POST',
             headers: {
@@ -73,7 +87,12 @@ export default function SignUpForm() {
             }
         }
         else {
-            console.log("ok");
+            const data = await JSON.parse(await res.text())
+            dispatch(login({
+                username: data.username,
+                uid: data.userId,
+            }))
+            redirect('/')
         }
     }
     console.log(account.gender)

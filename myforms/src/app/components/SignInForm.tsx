@@ -4,8 +4,12 @@ import Logo from "../components/logo";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faSquareFacebook, faGithubSquare, faLinkedin, faGoogle } from "@fortawesome/free-brands-svg-icons"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { MSG } from "../errMsg";
+import { useAppDispatch, useAppSelector } from "../redux/hook";
+import { login } from "../redux/slices/authSlice";
+import { doneLoading, loading } from "../redux/slices/loadingSlice";
+import { redirect } from 'next/navigation'
 
 export default function SignInForm() {
     const [account, setAccount] = useState({
@@ -13,8 +17,17 @@ export default function SignInForm() {
         password: '',
     })
     const [err, setErr] = useState<number>(0)
+    const isLoading = useAppSelector((state) => state.LoadingReducer.isLoading)
+    const dispatch = useAppDispatch();
+
+    const username = useAppSelector((state) => state.AuthReducer.username)
+    useEffect(() => {
+        if (username != "") redirect("/")
+    }, [username])
+
     async function handleOnSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
+        dispatch(loading());
         const res = await fetch('https://localhost:7299/auth/login', {
             method: 'POST',
             headers: {
@@ -22,13 +35,18 @@ export default function SignInForm() {
             },
             body: JSON.stringify(account)
         })
-        const data = await res.text()
+        dispatch(doneLoading())
         if (!res.ok) {
             setErr(7);
             return;
         }
         else {
-            console.log("ok")
+            const data = await JSON.parse(await res.text())
+            dispatch(login({
+                username: data.username,
+                uid: data.userId,
+            }))
+            redirect('/')
         }
 
     }
@@ -91,6 +109,7 @@ export default function SignInForm() {
                         className='cursor-pointer bg-light-btn dark:bg-dark-btn text-light-text dark:text-dark-text text-center font-bold px-4 py-2 rounded-md w-full mb-auto mt-5'
                         type='submit'
                         value="Sign in"
+                        disabled={isLoading}
                     />
                     <div className="text-sm mt-1">
                         <span>No Account? </span>
