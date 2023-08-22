@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "c6xqocIwSRjXDpgfQQh9ouZ8Jd/NverFSRFSoRggnB7ttW+711f+8aRIUv0ShgitKfBVSvlyg85X0c8Ma9zfwQ==",
+  "dgSpecHash": "j6F2hORWhf8eLo1P/2GcBducAn+q/+NUItn00rZ5yZ3QIOLhRjiOgj15ykfWvTamezBB05NvI3n5XvNQDuf0+Q==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Admin\\OneDrive - VNU-HCMUS\\Desktop\\myForms\\myforms_server\\myforms_server.csproj",
+  "projectFilePath": "c:\\Users\\Admin\\OneDrive - VNU-HCMUS\\Desktop\\myForms\\myforms_server\\myforms_server.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Admin\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.1\\automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Admin\\OneDrive - VNU-HCMUS\\Desktop\\myForms\\myforms_server\\myforms_server.csproj": {}
+    "c:\\Users\\Admin\\OneDrive - VNU-HCMUS\\Desktop\\myForms\\myforms_server\\myforms_server.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Admin\\OneDrive - VNU-HCMUS\\Desktop\\myForms\\myforms_server\\myforms_server.csproj": {
+    "c:\\Users\\Admin\\OneDrive - VNU-HCMUS\\Desktop\\myForms\\myforms_server\\myforms_server.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Admin\\OneDrive - VNU-HCMUS\\Desktop\\myForms\\myforms_server\\myforms_server.csproj",
+        "projectUniqueName": "c:\\Users\\Admin\\OneDrive - VNU-HCMUS\\Desktop\\myForms\\myforms_server\\myforms_server.csproj",
         "projectName": "myforms_server",
-        "projectPath": "C:\\Users\\Admin\\OneDrive - VNU-HCMUS\\Desktop\\myForms\\myforms_server\\myforms_server.csproj",
+        "projectPath": "c:\\Users\\Admin\\OneDrive - VNU-HCMUS\\Desktop\\myForms\\myforms_server\\myforms_server.csproj",
         "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Admin\\OneDrive - VNU-HCMUS\\Desktop\\myForms\\myforms_server\\obj\\",
+        "outputPath": "c:\\Users\\Admin\\OneDrive - VNU-HCMUS\\Desktop\\myForms\\myforms_server\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",

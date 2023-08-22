@@ -6,7 +6,5 @@ namespace myforms_server.models.DTOs
     {
         [Required]
         public string AccessToken { get; set; }
-        [Required]
-        public string RefreshToken { get; set; }
     }
 }

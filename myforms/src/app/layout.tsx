@@ -12,8 +12,9 @@ import Context from './context';
 
 import Navbar from './components/navbar'
 import Footer from './components/footer'
-import LoadingModal from './components/loading-modal';
+import LoadingModal from './components/loadingModal';
 import ReduxProvider from './redux/provider';
+import NextauthProvider from './components/nextauthProvider';
 
 const inter = Inter({ subsets: ['latin'], weight: '400', })
 
@@ -34,12 +35,14 @@ export default function RootLayout({
     <html lang="en" >
       <body className={inter.className}>
         <Context>
-          <ReduxProvider>
-            <Navbar />
-            {children}
-            <Footer />
-            <LoadingModal />
-          </ReduxProvider>
+          <NextauthProvider>
+            <ReduxProvider>
+              <Navbar />
+              {children}
+              <Footer />
+              <LoadingModal />
+            </ReduxProvider>
+          </NextauthProvider>
         </Context>
       </body>
     </html>

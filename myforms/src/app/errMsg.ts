@@ -6,4 +6,5 @@ export const MSG = {
     5: "Email is taken. please try another",
     6: "Username is taken. please try another",
     7: "Email/Username or password is incorrect",
+    8: "Server error, please try again later"
 }

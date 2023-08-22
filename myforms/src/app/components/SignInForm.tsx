@@ -1,18 +1,20 @@
 'use client';
 
-import Logo from "../components/logo";
+import Logo from "./logo";
 import Link from "next/link";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faSquareFacebook, faGithubSquare, faLinkedin, faGoogle } from "@fortawesome/free-brands-svg-icons"
 import { useEffect, useState } from "react"
 import { MSG } from "../errMsg";
+import { loginData } from "../interfaces/loginData";
 import { useAppDispatch, useAppSelector } from "../redux/hook";
 import { login } from "../redux/slices/authSlice";
 import { doneLoading, loading } from "../redux/slices/loadingSlice";
 import { redirect } from 'next/navigation'
+import OauthContainer from "./oauthContainter";
+import signIn from "../sign-in/action";
+import { cookies } from "next/dist/client/components/headers";
 
 export default function SignInForm() {
-    const [account, setAccount] = useState({
+    const [account, setAccount] = useState<loginData>({
         username: '',
         password: '',
     })
@@ -28,25 +30,45 @@ export default function SignInForm() {
     async function handleOnSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         dispatch(loading());
-        const res = await fetch('https://localhost:7299/auth/login', {
-            method: 'POST',
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(account)
-        })
-        dispatch(doneLoading())
-        if (!res.ok) {
-            setErr(7);
-            return;
-        }
-        else {
-            const data = await JSON.parse(await res.text())
-            dispatch(login({
-                username: data.username,
-                uid: data.userId,
-            }))
-            redirect('/')
+        try {
+            const res = await fetch('http://localhost:3000/api/login', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                    // Cookie: cookies().toString(),
+                },
+                credentials: "include",
+                body: JSON.stringify(account)
+            })
+            // const res = await signIn(account);
+            dispatch(doneLoading())
+            if (!res.ok) {
+                if (res.status === 500) {
+                    setErr(8)
+                    return false
+                }
+                else setErr(7)
+                return false
+            }
+            else {
+                const data = await JSON.parse(await res.text())
+                dispatch(login({
+                    username: data.username,
+                    uid: data.userId,
+                    origin: "origin",
+                }))
+                const user = {
+                    id: data.userId,
+                    email: data.email,
+                    username: data.username
+                }
+                localStorage.setItem("user", JSON.stringify(user))
+                localStorage.setItem("accessToken", data.accessToken);
+                localStorage.setItem("origin", "orgin")
+                redirect('/dashboard/forms')
+            }
+        } catch (error) {
+            dispatch(doneLoading())
         }
 
     }
@@ -82,7 +104,7 @@ export default function SignInForm() {
                         }}
                     />
                 </div>
-                <div className="mt-2">
+                {/* <div className="mt-2">
                     <p className=" before:content-['-'] after:content-['-'] text-center ">or</p>
                     <div className="flex flex-wrap items-center justify-center gap-3 text-4xl">
                         <div className=" cursor-pointer rounded-md bg-blue-700 text-light-bg flex items-center overflow-hidden w-[35px] transition-all duration-500 hover:w-[165px] h-[35px] p-[2px] ">
@@ -102,7 +124,8 @@ export default function SignInForm() {
                             <div className="text-xs whitespace-nowrap p-1">Sign in with Github</div>
                         </div>
                     </div>
-                </div>
+                </div> */}
+                <OauthContainer />
                 <div className="mt-auto">
                     <p id="warn" className="text-sm text-red-700">{err !== 0 && MSG[err as keyof typeof MSG]}</p>
                     <input

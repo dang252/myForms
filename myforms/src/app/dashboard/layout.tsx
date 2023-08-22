@@ -1,4 +1,4 @@
-import DBSideBar from "../components/dashboard-sidebar";
+import DBSideBar from "../components/dashboardSidebar";
 
 export const metadata = {
     title: 'Dashboard',

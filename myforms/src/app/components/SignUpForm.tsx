@@ -1,10 +1,9 @@
 'use client';
-import Logo from "../components/logo";
+import Logo from "./logo";
 import Link from "next/link";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faSquareFacebook, faGithubSquare, faLinkedin, faGoogle } from "@fortawesome/free-brands-svg-icons"
 import DatePicker from "./datepicker";
-import { UserAccount } from "../interfaces/UserAccount";
+import OauthContainer from "./oauthContainter";
+import { registerData } from "../interfaces/registerData";
 import { useState, useEffect } from "react";
 import { MSG } from "../errMsg";
 import { regexEmail, regexPassword, regexTel } from "../regex";
@@ -12,7 +11,7 @@ import { useAppDispatch, useAppSelector } from "../redux/hook";
 import { login } from "../redux/slices/authSlice";
 import { doneLoading, loading } from "../redux/slices/loadingSlice";
 import { redirect } from 'next/navigation'
-
+import { useSession, signOut, signIn } from "next-auth/react"
 function ContinueHandle() {
     const form = document.getElementById('sign-up-form')
     form?.classList.add('translate-x-[-50%]')
@@ -24,7 +23,7 @@ function GobackHandle() {
 }
 
 export default function SignUpForm() {
-    const [account, setAccount] = useState<UserAccount>(
+    const [account, setAccount] = useState<registerData>(
         {
             username: '',
             email: '',
@@ -42,10 +41,10 @@ export default function SignUpForm() {
     const dispatch = useAppDispatch();
 
     const username = useAppSelector((state) => state.AuthReducer.username)
+
     useEffect(() => {
         if (username != "") redirect("/")
     }, [username])
-
 
     function ContinueRegex() {
         if (account.email === '' || !regexEmail.test(account.email)) {
@@ -68,34 +67,47 @@ export default function SignUpForm() {
 
         e.preventDefault()
         dispatch(loading());
-        const res = await fetch('https://localhost:7299/auth/register', {
-            method: 'POST',
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(account)
-        })
-        const data = await res.text();
-        if (!res.ok) {
-            if (data.includes("Email")) {
-                setErr(5);
-                return;
+        try {
+            const res = await fetch('http://localhost:3000/api/register', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                    // Cookie: cookies().toString(),
+                },
+                credentials: "include",
+                body: JSON.stringify(account)
+            })
+            dispatch(doneLoading())
+            if (!res.ok) {
+                if (res.status === 500) {
+                    setErr(8)
+                    return false
+                }
+                else setErr(7)
+                return false
             }
-            else if (data.includes("Username")) {
-                setErr(6);
-                return;
+            else {
+                const data = await JSON.parse(await res.text())
+                dispatch(login({
+                    username: data.username,
+                    uid: data.userId,
+                    origin: "origin",
+                }))
+                const user = {
+                    id: data.userId,
+                    email: data.Email,
+                    username: data.Username
+                }
+                localStorage.setItem("user", JSON.stringify(user))
+                localStorage.setItem("accessToken", data.accessToken);
+                localStorage.setItem("origin", "orgin")
+                redirect('/dashboard/forms')
             }
-        }
-        else {
-            const data = await JSON.parse(await res.text())
-            dispatch(login({
-                username: data.username,
-                uid: data.userId,
-            }))
-            redirect('/')
+        } catch (error) {
+            dispatch(doneLoading())
         }
     }
-    console.log(account.gender)
+
     return (
         <div className=" w-[400px] h-[600px] bg-light-bg text-light-p  dark:bg-dark-bg dark:text-dark-p rounded-lg p-4 flex flex-col flex-wrap overflow-hidden relative">
             <Logo />
@@ -141,14 +153,17 @@ export default function SignUpForm() {
                             required
                         />
                     </div>
-                    <div className="mt-auto">
+                    {/* <div className="mt-auto">
                         <p className=" before:content-['-'] after:content-['-'] text-center ">or</p>
                         <div className="flex flex-wrap items-center justify-center gap-3 text-4xl">
                             <div className=" cursor-pointer rounded-md bg-blue-700 text-light-bg flex items-center overflow-hidden w-[35px] transition-all duration-500 hover:w-[165px] h-[35px] p-[2px] ">
                                 <FontAwesomeIcon icon={faSquareFacebook} />
                                 <div className="text-xs whitespace-nowrap p-1">Sign in with Facebook</div>
                             </div>
-                            <div className=" cursor-pointer rounded-md bg-red-700 text-light-bg flex items-center overflow-hidden w-[35px] transition-all duration-500 hover:w-[165px] h-[35px] p-[3px] ">
+                            <div
+                                className=" cursor-pointer rounded-md bg-red-700 text-light-bg flex items-center overflow-hidden w-[35px] transition-all duration-500 hover:w-[165px] h-[35px] p-[3px] "
+                                onClick={SignInGoogleHandler}
+                            >
                                 <FontAwesomeIcon icon={faGoogle} className="text-3xl" />
                                 <div className="text-xs whitespace-nowrap p-1">Sign in with Google</div>
                             </div>
@@ -161,7 +176,8 @@ export default function SignUpForm() {
                                 <div className="text-xs whitespace-nowrap p-1">Sign in with Github</div>
                             </div>
                         </div>
-                    </div>
+                    </div> */}
+                    <OauthContainer></OauthContainer>
                     <div className="mt-auto">
                         <p id="warn" className="text-sm text-red-700">{err !== 0 && MSG[err as keyof typeof MSG]}</p>
                         <button

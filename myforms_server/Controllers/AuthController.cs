@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -85,27 +87,27 @@ namespace Myforms.Controller.Auth
         [HttpPost("register")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        public async Task<ActionResult> Register(RegisterDataDTO userData)
+        public async Task<ActionResult> Register(RegisterDataDTO userInput)
         {
-            var exist = db.Users.Any(user => user.Email == userData.Email);
+            var exist = db.Users.Any(user => user.Email == userInput.Email);
             if (exist)
             {
                 return BadRequest("Email already taken");
             }
-            exist = db.Users.Any(user => user.Username == userData.Username);
+            exist = db.Users.Any(user => user.Username == userInput.Username);
             if (exist)
             {
                 return BadRequest("Username already taken");
             }
-            string passwordHash = BCrypt.Net.BCrypt.HashPassword(userData.Password);
+            string passwordHash = BCrypt.Net.BCrypt.HashPassword(userInput.Password);
             //create User to save to database
             User user = new myforms_server.models.User()
             {
-                Email = userData.Email,
-                Phonenumber = userData.PhoneNumber,
-                Dob = userData.Dob,
-                Username = userData.Username,
-                Gender = userData.Gender,
+                Email = userInput.Email,
+                Phonenumber = userInput.PhoneNumber,
+                Dob = userInput.Dob,
+                Username = userInput.Username,
+                Gender = userInput.Gender,
                 Password = passwordHash,
             };
 
@@ -113,40 +115,47 @@ namespace Myforms.Controller.Auth
 
             await db.SaveChangesAsync();
 
+            Tokens Tokens = await GenerateToken(user);
             AuthResult result = new AuthResult()
             {
                 userId = user.userId,
                 Username = user.Username,
                 Email = user.Email,
-                Tokens = await GenerateToken(user),
+                AccessToken = Tokens.AccessToken,
+                RefreshToken = Tokens.RefreshToken,
             };
+            //Response.Cookies.Append("X-Refresh-Token", Tokens.RefreshToken, new CookieOptions() { HttpOnly = true, SameSite = SameSiteMode.Strict, Expires = DateTime.Now.AddDays(7) });
             return Ok(result);
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult> Login(LoginDataDTO user)
+        public async Task<ActionResult> Login(LoginDataDTO userInput)
         {
-            var account = db.Users.Where(u => (u.Username == user.Username || u.Email == user.Username)).SingleOrDefault();
-            //Debug.WriteLine(account.userId);
+            var account = db.Users.Where(u => (u.Username == userInput.Username || u.Email == userInput.Username)).SingleOrDefault();
             if (account == null)
             {
                 return BadRequest("Can't find account");
             }
             else
             {
-                bool checkPW = BCrypt.Net.BCrypt.Verify(user.Password, account.Password);
+                Debug.WriteLine(account);
+                bool checkPW = BCrypt.Net.BCrypt.Verify(userInput.Password, account.Password);
                 if (!checkPW)
                 {
                     return BadRequest("Wrong password");
                 }
                 else {
+                    Tokens Tokens = await GenerateToken(account);
                     AuthResult result = new AuthResult()
                     {
                         userId = account.userId,
                         Username = account.Username,
                         Email = account.Email,
-                        Tokens = await GenerateToken(account),
+                        AccessToken = Tokens.AccessToken,
+                        RefreshToken = Tokens.RefreshToken,
                     };
+                    //Response.Cookies.Append("X-test", Tokens.RefreshToken, new CookieOptions() { HttpOnly = false, Expires = DateTime.Now.AddDays(7) });
+                    //Response.Cookies.Append("X-Refresh-Token", Tokens.RefreshToken, new CookieOptions() { HttpOnly = true, SameSite = SameSiteMode.Strict, Expires = DateTime.Now.AddDays(7) });
                     return Ok(result);
                 }
             }
@@ -174,17 +183,22 @@ namespace Myforms.Controller.Auth
                     return BadRequest("Access token not expired yet!");
                 }
                 //check3: refresh token exist 
-                var StoredToken = await db.RefreshTokens.FirstOrDefaultAsync(x => x.Token == Tokens.RefreshToken);
+                var CookieToken = HttpContext.Request.Cookies["refreshToken"];
+                if (CookieToken == null)
+                {
+                    return BadRequest("Refresh Token is invalid");
+                }
+                var StoredToken = await db.RefreshTokens.FirstOrDefaultAsync(x => x.Token == CookieToken);
                 if(StoredToken == null)
                 {
                     return BadRequest("Refresh Token is invalid");
                 }
                 //check4: refresh token has been used/revoked?
-                if (StoredToken.isUsed)
+                if (StoredToken.isUsed == true)
                 {
                     return BadRequest("Refresh Token has been used");
                 }
-                if (StoredToken.isRevoked)
+                if (StoredToken.isRevoked == true)
                 {
                     return BadRequest("Refresh Token has been revoked");
                 }
@@ -207,13 +221,16 @@ namespace Myforms.Controller.Auth
 
                 var user = await db.Users.SingleOrDefaultAsync(user => user.userId == StoredToken.userId);
                 //return
+                Tokens NewTokens = await GenerateToken(user);
                 AuthResult result = new AuthResult()
                 {
                     userId = user.userId,
                     Username = user.Username,
                     Email = user.Email,
-                    Tokens = await GenerateToken(user),
+                    AccessToken = NewTokens.AccessToken,
+                    RefreshToken = NewTokens.RefreshToken,
                 };
+                //Response.Cookies.Append("X-Refresh-Token", NewTokens.RefreshToken, new CookieOptions() { HttpOnly = true, SameSite = SameSiteMode.Strict, Expires = DateTime.Now.AddDays(7) });
                 return Ok(result);
 
             }
@@ -222,6 +239,76 @@ namespace Myforms.Controller.Auth
                 return BadRequest("Server Error");
             }
         }
+        [HttpPost("oauth")]
+        public async Task<ActionResult> Oauth(OauthDTO userInput)
+        {
+            Debug.WriteLine("User input", userInput);
+            var account = db.Users.Where(u => (u.Email == userInput.Email)).SingleOrDefault();
+            if (account == null)
+            {
+                string passwordHash = BCrypt.Net.BCrypt.HashPassword(Guid.NewGuid().ToString());
+                User user = new myforms_server.models.User()
+                {
+                    Email = userInput.Email,
+                    Phonenumber = "0000000000",
+                    Dob = DateTime.UtcNow,
+                    Username = userInput.Username,
+                    Gender = "Other",
+                    Password = passwordHash,
+                };
 
+                await db.Users.AddAsync(user);
+
+                await db.SaveChangesAsync();
+            }
+
+            //else if(account.Username != userInput.Username)
+            //{
+            //    return BadRequest("Email already taken");
+            //}
+
+            account = db.Users.Where(u => (u.Email == userInput.Email)).SingleOrDefault();
+            Tokens Tokens = await GenerateToken(account);
+            AuthResult result = new AuthResult()
+            {
+                userId = account.userId,
+                Username = account.Username,
+                Email = account.Email,
+                AccessToken = Tokens.AccessToken,
+                RefreshToken = Tokens.RefreshToken,
+            };
+            //Response.Cookies.Append("X-Refresh-Token", Tokens.RefreshToken, new CookieOptions() { HttpOnly = true, SameSite = SameSiteMode.Strict, Expires = DateTime.Now.AddDays(7) });
+            return Ok(result);
+
+        }
+        [HttpGet("logout")]
+        public async Task<ActionResult> logout()
+        {
+            string header = Request.Headers.ToString();
+            Debug.WriteLine(header);
+
+            var CookieToken = HttpContext.Request.Cookies["refreshToken"];
+            if (CookieToken == null)
+            {
+                Debug.WriteLine("no cookie");
+                return BadRequest();
+            }
+            Debug.WriteLine(CookieToken);
+            var StoredToken = await db.RefreshTokens.FirstOrDefaultAsync(x => x.Token == CookieToken);
+            if (StoredToken == null)
+            {
+                Debug.WriteLine("cant find");
+                return BadRequest();
+            }
+            else
+            {
+                Debug.WriteLine("OK");
+                StoredToken.isRevoked = true;
+                db.Update(StoredToken);
+                await db.SaveChangesAsync();
+                return Ok();
+            }
+
+        }
     }
 }
